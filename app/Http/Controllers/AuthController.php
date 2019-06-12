@@ -46,6 +46,10 @@ class AuthController extends Controller
             throw new BaseException('请输入正确的密码');
         }
 
+        $user->update([
+            'login_at' => date('Y-m-d H:i:s')
+        ]);
+
         $token = auth()->login($user);
         return jsonAnswer([
             'token' => $token

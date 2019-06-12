@@ -11,7 +11,7 @@ class BaseException extends Exception
 {
     protected $data = [];
 
-    public function __construct($message, $code = 0, $data = array())
+    public function __construct($message, $code = -1, $data = array())
     {
         $this->code = $code;
 

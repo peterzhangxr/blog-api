@@ -54,14 +54,14 @@ class Handler extends ExceptionHandler
     {
         if ($exception instanceof NotFoundHttpException) {
             return response()->json([
-                'code' => $exception->getCode(),
+                'code' => $exception->getStatusCode(),
                 'message' => '接口地址错误'
-            ], $exception->getCode(), $exception->getHeaders(), JSON_UNESCAPED_UNICODE);
+            ], $exception->getStatusCode(), $exception->getHeaders(), JSON_UNESCAPED_UNICODE);
         } else if ($exception instanceof MethodNotAllowedHttpException) {
             return response()->json([
-                'code' => $exception->getCode(),
+                'code' => $exception->getStatusCode(),
                 'message' => '不允许的请求方法'
-            ], $exception->getCode(), $exception->getHeaders(), JSON_UNESCAPED_UNICODE);
+            ], $exception->getStatusCode(), $exception->getHeaders(), JSON_UNESCAPED_UNICODE);
         } else if ($exception instanceof BaseException) {
             return response()->json([
                 'code' => $exception->getCode(),
@@ -73,6 +73,8 @@ class Handler extends ExceptionHandler
                 'message' => $exception->getMessage(),
             ], 200, [], JSON_UNESCAPED_UNICODE);
         }
+
+        \Log::error($exception);
 
         return response()->json([
             'code' => 500,

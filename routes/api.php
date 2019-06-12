@@ -15,3 +15,8 @@
 Route::group([ 'prefix' => 'auth' ], function () {
     Route::post('login', 'AuthController@login');
 });
+
+//User
+Route::group([ 'prefix' => 'user', 'middleware' => 'auth' ], function () {
+    Route::post('profile', 'UserController@profile');
+});

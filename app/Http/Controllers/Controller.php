@@ -10,4 +10,14 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    protected $loginUser; //当前登录用户
+
+    public function __construct()
+    {
+        $user = auth()->user();
+        if (!empty($user)) {
+            $this->loginUser = $user;
+        }
+    }
 }
