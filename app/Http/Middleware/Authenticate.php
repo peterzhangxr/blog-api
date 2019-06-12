@@ -2,20 +2,28 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use App\Exceptions\BaseException;
+use Closure;
+use Illuminate\Http\Request;
 
-class Authenticate extends Middleware
+class Authenticate
 {
+
     /**
-     * Get the path the user should be redirected to when they are not authenticated.
+     * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return string
+     * @param  Request $request
+     * @param  Closure  $next
+     * @return mixed
+     * @throws BaseException
      */
-    protected function redirectTo($request)
+    public function handle($request, Closure $next)
     {
-        if (! $request->expectsJson()) {
-            return route('login');
+        $user = auth()->user();
+        if (!empty($user)) {
+            return $next($request);
         }
+
+        throw new BaseException('您暂未登录，请先登录');
     }
 }

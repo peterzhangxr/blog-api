@@ -4,6 +4,10 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class Handler extends ExceptionHandler
 {
@@ -14,6 +18,7 @@ class Handler extends ExceptionHandler
      */
     protected $dontReport = [
         //
+        BaseException::class
     ];
 
     /**
@@ -29,8 +34,9 @@ class Handler extends ExceptionHandler
     /**
      * Report or log an exception.
      *
-     * @param  \Exception  $exception
+     * @param  Exception  $exception
      * @return void
+     * @throws Exception
      */
     public function report(Exception $exception)
     {
@@ -40,12 +46,37 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $exception
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @param  Exception  $exception
+     * @return Response
      */
     public function render($request, Exception $exception)
     {
-        return parent::render($request, $exception);
+        if ($exception instanceof NotFoundHttpException) {
+            return response()->json([
+                'code' => $exception->getCode(),
+                'message' => '接口地址错误'
+            ], $exception->getCode(), $exception->getHeaders(), JSON_UNESCAPED_UNICODE);
+        } else if ($exception instanceof MethodNotAllowedHttpException) {
+            return response()->json([
+                'code' => $exception->getCode(),
+                'message' => '不允许的请求方法'
+            ], $exception->getCode(), $exception->getHeaders(), JSON_UNESCAPED_UNICODE);
+        } else if ($exception instanceof BaseException) {
+            return response()->json([
+                'code' => $exception->getCode(),
+                'message' => $exception->getMessage()
+            ], 200, [], JSON_UNESCAPED_UNICODE);
+        } else if ($exception->getCode() != 0) {
+            return response()->json([
+                'code' => $exception->getCode(),
+                'message' => $exception->getMessage(),
+            ], 200, [], JSON_UNESCAPED_UNICODE);
+        }
+
+        return response()->json([
+            'code' => 500,
+            'message' => app()->environment('production') ? '系统错误' : $exception->getMessage()
+        ], 500, [], JSON_UNESCAPED_UNICODE);
     }
 }
