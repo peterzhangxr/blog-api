@@ -20,3 +20,6 @@ Route::group([ 'prefix' => 'auth' ], function () {
 Route::group([ 'prefix' => 'user', 'middleware' => 'auth' ], function () {
     Route::post('profile', 'UserController@profile');
 });
+
+//Article
+Route::resource('article','ArticleController');

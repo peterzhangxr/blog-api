@@ -29,7 +29,7 @@ class User extends Authenticatable implements JWTSubject
      *
      * @var string
      */
-    protected $table = 'user';
+    protected $table = 't_user';
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
